@@ -7,18 +7,22 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework import status
+from .serializers import RoomSerializer
 
 from .models import Room, Answer, Question
 from .models import UserInputDataset
 
 from .forms import DatasetPostForm
-
+import pymongo
 import json
 
 import random
 import tensorflow as tf
 import os
 import sys
+
+#flask로 웹페이지 간단하게 만들고, mongodb, postgresql, 증상 웹페이지에 인풋 -> 의심되는 병 진단 결과 아웃풋,,
+#서버에 bert api로 인풋을 get전송,,  flask 웹프레임워크,, 3090에서 다처리하고 처리한걸 flask로 보내기. (이걸 django로 바꾸기)
 
 
 ###### import for transformer model inferencing ######
@@ -37,8 +41,6 @@ from .attention_seq2seq import data as attention_seq2seq_data
 from .attention_seq2seq import model as attention_seq2seq
 from .attention_seq2seq.configs import DEFINES as DEFINES_attention_seq2seq
 
-
-
 def index(request):
     chatroom_list = Room.objects.order_by('rank')[:5]
     context = {
@@ -46,19 +48,33 @@ def index(request):
     }
     return render(request, 'chatroom/index.html', context)
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'DELETE','POST'])
 def room(request, lm_name):
     chatroom_list = Room.objects.order_by('rank')[:5]
-    baidu = Room.objects.all()
+    client = pymongo.MongoClient(host='localhost',
+                                 port=27017)
+    db = client.test
+    baidu = db.doc
+    id = '63e3773f83a35219e5fca40a'
+    #baidu = Room.objects.all()
+    item = baidu.find_one()
+    # print(x)
+
+    #READ
     context = {
-        'keywords': baidu
+        'keywords': item['keywords'],
+        'url': item['url'],
+        'title': item['title']
     }
+    print("debugging from views:", context)
+
     '''
     context = {
         'lm_name': mark_safe(json.dumps(lm_name)),
         'chatroom_list': chatroom_list
     }
     '''
+
     return render(request, 'chatroom/room.html', context)
 
 
@@ -68,13 +84,14 @@ def detail(request, lm_name):
 
 
 @csrf_exempt
-def post_dataset(request, lm_name):
+def post_dataset(request):
 
     question = request.POST.get('question', None)
     answer = request.POST.get('answer', None)
 
-
+    #유저가 보낸 data를 UserInputDataset()모델로 db에 저장
     new_dataset = UserInputDataset(question=question, answer=answer)       # save to DB
+    new_dataset.text = question
     new_dataset.save()
 
     print("success to insert new QA dataset from the user")
@@ -83,11 +100,28 @@ def post_dataset(request, lm_name):
     data = {
         'is_valid': 1
     }
+    return render(request, 'chatroom/room.html', context={'question': new_dataset})
+    #return JsonResponse(data)
 
-    return JsonResponse(data)
+def post_view(request):
+    return render(request, 'chatroom/room.html')
 
+def get_post(request):
+    if request.method == 'GET':
+        id = request.GET['id']
+        data = {
+            'data': id,
+        }
+        return render(request, 'chatroom/parameter.html', data)
 
-
+    elif request.method == 'POST':
+        id = request.POST['id']
+        name = request.POST['name']
+        data = {
+            'id': id,
+            'name': name
+        }
+        return render(request, 'chatroom/parameter.html', data)
 def message(request, message, lm_name):
     # if lm_name == 'tranformer':
     # if lm_name == 'seq2seq':
@@ -279,3 +313,63 @@ def helloworld(request, num, lm_name):
 
     return HttpResponse("sum of %s and 1 is %s" %(num, z))
 '''
+
+
+@api_view(['GET', 'POST', 'DELETE'])
+def tutorial_list(request):
+    if request.method == 'GET':
+        tutorials = Room.objects.all()
+
+        title = request.GET.get('title', None)
+        if title is not None:
+            tutorials = tutorials.filter(title__icontains=title)
+
+        tutorials_serializer = RoomSerializer(tutorials, many=True)
+        return JsonResponse(tutorials_serializer.data, safe=False)
+        # 'safe=False' for objects serialization
+
+    elif request.method == 'POST':
+        tutorial_data = JSONParser().parse(request)
+        tutorial_serializer = RoomSerializer(data=tutorial_data)
+        if tutorial_serializer.is_valid():
+            tutorial_serializer.save()
+            return JsonResponse(tutorial_serializer.data, status=status.HTTP_201_CREATED)
+        return JsonResponse(tutorial_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        count = Room.objects.all().delete()
+        return JsonResponse({'message': '{} Tutorials were deleted successfully!'.format(count[0])},
+                            status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def tutorial_detail(request, pk):
+    try:
+        tutorial = Room.objects.get(pk=pk)
+    except Room.DoesNotExist:
+        return JsonResponse({'message': 'The tutorial does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        tutorial_serializer = RoomSerializer(tutorial)
+        return JsonResponse(tutorial_serializer.data)
+
+    elif request.method == 'PUT':
+        tutorial_data = JSONParser().parse(request)
+        tutorial_serializer = RoomSerializer(tutorial, data=tutorial_data)
+        if tutorial_serializer.is_valid():
+            tutorial_serializer.save()
+            return JsonResponse(tutorial_serializer.data)
+        return JsonResponse(tutorial_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        tutorial.delete()
+        return JsonResponse({'message': 'Tutorial was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['GET'])
+def tutorial_list_published(request):
+    tutorials = Room.objects.filter(published=True)
+
+    if request.method == 'GET':
+        tutorials_serializer = RoomSerializer(tutorials, many=True)
+        return JsonResponse(tutorials_serializer.data, safe=False)

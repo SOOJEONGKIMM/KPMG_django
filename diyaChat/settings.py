@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
+APPEND_SLASH = False
 # Application definition
 
 INSTALLED_APPS = [
@@ -176,15 +176,31 @@ STATIC_URL = '/static/'
 
 #client = pymongo.MongoClient("whatever you like")
 client = pymongo.MongoClient(host='localhost', port=27017)
-#db = client.test
-#collection = db.term
+db = client.test
+collection = db.doc
+#debug
+#x = collection.find_one()
+#print(x)
+
+import mongoengine
+
+# Other settings are here
+
+# Connect with MongoEngine
+'''
+mongoengine.connect(
+    host='mongodb+srv://<mongodb-user>:<password>'
+    '@<mongodb-host>/<database-name>'
+    '?retryWrites=true&w=majority',
+    connect=False,
+)
 
 word_wij_invert_nk = []
 doc_dj_keyword_weight_title_url_time_text = [None]
 term_index_dict = {}
 
 index = 0
-'''
+
 print("获取 word_wij_invert_nk")
 for elem in collection.find():
     #print("elem:",elem)

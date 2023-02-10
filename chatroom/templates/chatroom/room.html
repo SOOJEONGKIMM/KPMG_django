@@ -174,19 +174,52 @@
                             </div>
 
                             <!--new_message_head-->
+                         <form action="/chatroom/room/" method="POST">
+                             {% csrf_token %}
+                                <h1> got message. </h1>
+                                {{question}}
+
+                         </form>
+
+                        <head>
+                            <meta charset="UTF-8">
+                            <title>Title</title>
+                            <script>
+
+                            function send() {
+                                alert("send");
+                                document.getElementById("contents").submit();
+                            }
+                            </script>
+                        </head>
+                        <body>
+                            <form id="contents" name="contents" method="post" action="/chatroom/room/">
+                                {% csrf_token %}
+                                id : <input name="id" type="text">
+                                pw: <input name="name" type="text">
+                                <button type="button" onclick="send();">전송</button>
+                            </form>
+                        </body>
 
                             <div id="chat_area">
                                 <p class="init_chat">
                                     {% csrf_token %}
-                                    <h1> 채팅을 시작합니다.</h1>
-                                    {% for k in keywords%}
-                                        {{ k.keywords }}
-                                        {{ k.title }} <br/>
+                                    <h1> 채팅을 시작합니다. </h1>
+
+                                    {% for k in url%}
+                                       {{ k }}
                                     {% endfor %}
+                                    {% for k in title%}
+                                        {{ k }}
+                                    {% endfor %}
+                                     <h1>
+                                         {{ text }}
+                                     </h1>
                                     {% for q in question_obj %}
                                         <h1>{{question.question_obj</h1>
                                         </br>
                                     {% endfor %}
+
 
                                     {% if lm_name %}
                                         The language model this chatroom uses is {{ lm_name }}
@@ -261,8 +294,16 @@
 
 
                             <div class="message_write" spellcheck="false">
+                                {% csrf_token %}
                                 <!-- <textarea class="form-control" placeholder="Type a message"></textarea> -->
-                                <input id="chat-message-input" class="form-control" type="text" placeholder="type a message" autocomplete="off"/>
+                                <form action="/chatroom/room/" method="GET">
+                                <input id="chat-message-input" class="form-control" type="question" name = "question" placeholder="type a message" autocomplete="off"/>
+                                <!-- action에는 요청을 보내는 URL이 들어간다. -->
+
+                                <input type = "submit" class = "btn btn-primary" value = "GET">
+                                 <h1>
+                                     {{ question }}
+                                 </h1>
                                 <div class="clearfix"></div>
                                 <div class="chat_bottom">
                                     <input id="chat-message-submit" class="pull-right btn btn-success" type="button" value="Send"/>

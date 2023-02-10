@@ -42,9 +42,11 @@ class Room(models.Model):
     url = models.CharField(max_length=200, blank=False, default='')
     text = models.CharField(max_length=200, blank=False, default='')
 
-
     def __str__(self):
-        return self.lm_name
+        return 'title : {},keywords : {},url: {}'.format(self.title, self.keywords, self.url)
+
+   # def __str__(self):
+   #     return self.lm_name
 
 class UserInputDataset(models.Model):
     question = models.CharField(max_length=100)
