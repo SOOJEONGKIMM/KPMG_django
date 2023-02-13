@@ -5,4 +5,4 @@ class DatasetPostForm(forms.ModelForm):
 
     class Meta:
         model = UserInputDataset
-        fields = ('question', 'answer',)
+        fields = ('question',)#, 'answer',)

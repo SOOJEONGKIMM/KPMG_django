@@ -70,12 +70,15 @@ def room(request, lm_name):
         #유저가 보낸 data를 UserInputDataset()모델로 db에 저장
         new_dataset = UserInputDataset()       # save to DB
         new_dataset.question = request.POST['question']
-        new_dataset.answer = request.POST['answer']
-        #new_dataset.text = question
+        #new_dataset.answer = request.POST['answer']
         new_dataset.save()
-
         print("success to insert new QA dataset from the user")
-        print("Q: " + new_dataset.question + " || A: " + new_dataset.answer)
+      #  print("Q: " + new_dataset.question + " || A: " + new_dataset.answer)
+        new_dataset = { #for request html
+            'question': new_dataset.question,
+           # 'answer': new_dataset.answer,
+        }
+        return render(request, 'chatroom/room.html', new_dataset)
     '''
     context = {
         'lm_name': mark_safe(json.dumps(lm_name)),
@@ -90,27 +93,6 @@ def detail(request, lm_name):
 
     return HttpResponse("You're looking at chatroom using %s." % lm_name)
 
-'''
-@csrf_exempt
-def UserInputDataset(request):
-    if request.method == 'POST':
-        #유저가 보낸 data를 UserInputDataset()모델로 db에 저장
-        new_dataset = UserInputDataset()       # save to DB
-        new_dataset.question = request.POST['question']
-        new_dataset.answer = request.POST['answer']
-        #new_dataset.text = question
-        new_dataset.save()
-
-        print("success to insert new QA dataset from the user")
-        #print("Q: " + question + " || A: " + answer)
-
-    data = {
-        'is_valid': 1
-    }
-    return redirect('index')
-    #return render(request, 'chatroom/room.html', context={'question': new_dataset})
-    #return JsonResponse(data)
-'''
 def post_view(request):
     return render(request, 'chatroom/room.html')
 

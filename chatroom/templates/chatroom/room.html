@@ -99,7 +99,7 @@
                                     <ul class="list-unstyled">
                                         <li class="left clearfix">
                                             <span class="chat-img pull-left">
-                                                <img src="http://www.sclance.com/pngs/profile-png/profile_png_1113720.png" class="img-circle">
+                                                <img src="https://pbs.twimg.com/media/FnjFW8LacAElm0T.jpg:large" class="img-circle">
                                             </span>
                                             <div class="chat-body clearfix">
                                                 <div class="header_sec">
@@ -108,14 +108,14 @@
                                             </div>
 
                                             <div class="contact_sec">
-                                                <strong class="primary-font">BERT</strong>
+                                                <strong class="primary-font">수정 님</strong>
                                                 <span class="badge pull-right">4</span>
                                             </div>
                                         </li>
 
                                         <li class="left clearfix">
                                             <span class="chat-img pull-left">
-                                                <img src="http://www.sclance.com/pngs/profile-png/profile_png_1113720.png" alt="User Avatar" class="img-circle">
+                                                <img src="https://image.kmib.co.kr/online_image/2023/0213/2023021221560560062_1676206565_0924286847.jpg" alt="User Avatar" class="img-circle">
                                             </span>
                                             <div class="chat-body clearfix">
                                                 <div class="header_sec">
@@ -123,14 +123,14 @@
                                                     <strong class="pull-right ">01:13AM</strong>
                                                 </div>
                                                 <div class="contact_sec">
-                                                    <strong class="primary-font">Transformer</strong>
+                                                    <strong class="primary-font">한준 님</strong>
                                                     <span class="badge pull-right">2</span>
                                                 </div>
                                             </div>
                                         </li>
                                         <li class="left clearfix">
                                             <span class="chat-img pull-left">
-                                                <img src="http://www.sclance.com/pngs/profile-png/profile_png_1113720.png" class="img-circle">
+                                                <img src="https://voguesg.s3.ap-southeast-1.amazonaws.com/wp-content/uploads/2023/01/27183543/banner-bondee-680x1020.jpg" class="img-circle">
                                             </span>
                                             <div class="chat-body clearfix">
                                                 <div class="header_sec">
@@ -138,7 +138,7 @@
                                                     <strong class="pull-right">2:08AM</strong>
                                                 </div>
                                                 <div class="contact_sec">
-                                                    <strong class="primary-font">seq2seq</strong>
+                                                    <strong class="primary-font">이경 님</strong>
                                                     <span class="badge pull-right">3</span>
                                                 </div>
                                             </div>
@@ -173,14 +173,6 @@
 
                             </div>
 
-                            <!--new_message_head-->
-                         <form action="/chatroom/room/" method="POST">
-                             {% csrf_token %}
-                                <h1> got message. </h1>
-                                {{question}}
-
-                         </form>
-
                         <head>
                             <meta charset="UTF-8">
                             <title>Title</title>
@@ -192,7 +184,7 @@
                             }
                             </script>
                         </head>
-                         <form action="/chatroom/room/" method="POST">
+                   <!--      <form action="/chatroom/room/" method="POST">
                             {% csrf_token %}
                             <div>
                               <label for="question">질문</label>
@@ -204,13 +196,12 @@
                             </div>
                             <br>
                             <input type="submit" value="제출">
-                          </form>
+                          </form> -->
 
                             <div id="chat_area">
                                 <p class="init_chat">
+                                    <h3> testing with baidu database: url and title from random index</h3>
                                     {% csrf_token %}
-                                    <h1> 채팅을 시작합니다. </h1>
-
                                     {% for k in url%}
                                        {{ k }}
                                     {% endfor %}
@@ -220,17 +211,15 @@
                                      <h1>
                                          {{ text }}
                                      </h1>
-                                    {% for q in question_obj %}
-                                        <h1>{{question.question_obj</h1>
+                                     <h1>
+                                     {{ question }}
+                                     </h1>
+                                    {% for q in new_dataset %}
+                                        <h1>{{new_dataset.question}}</h1>
+                                         {{ question }}
                                         </br>
                                     {% endfor %}
 
-
-                                    {% if lm_name %}
-                                        The language model this chatroom uses is {{ lm_name }}
-                                    {% else %}
-                                        access error
-                                    {% endif %}
 
                                 </p>
                                 <ul id="chat-log" class="list-unstyled">
@@ -260,7 +249,7 @@
                                         <div class="heartIcon"><img src="../../static/chatroom/img/heart.gif"></div>
                                         <h2>Thank You!</h2>
                                     </div>
-                                    <h4>감사합니다. 제공해주신 답변은 DIYA chatbot에게 큰 가르침이 될 것입니다.</h4>
+                                    <h4>감사합니다. 제공해주신 답변은 NARVIS chatbot에게 큰 가르침이 될 것입니다.</h4>
                                     <a class="close" href="#">×</a>
                                     <div class="content">
                                         <a target="_blank" rel="noopener noreferrer" href="https://github.com/kooyunmo/">
@@ -301,21 +290,17 @@
                             <div class="message_write" spellcheck="false">
                                 {% csrf_token %}
                                 <!-- <textarea class="form-control" placeholder="Type a message"></textarea> -->
-                                <form action="/chatroom/room/" method="GET">
+                                <form action="/chatroom/room/" method="POST">
                                 <input id="chat-message-input" class="form-control" type="question" name = "question" placeholder="type a message" autocomplete="off"/>
                                 <!-- action에는 요청을 보내는 URL이 들어간다. -->
 
-                                <input type = "submit" class = "btn btn-primary" value = "GET">
-                                 <h1>
-                                     {{ question }}
-                                 </h1>
+                                <input type = "submit" class = "btn btn-primary" value = "SEND">
+
                                 <div class="clearfix"></div>
                                 <div class="chat_bottom">
-                                    <input id="chat-message-submit" class="pull-right btn btn-success" type="button" value="Send"/>
-
 
                                     <div class="text-right">
-                                        <a class="btn btn-success btn-green" href="#reviews-anchor" id="open-review-box" style="margin:0px 10px;">Teach DiyaChat</a>
+                                        <a class="btn btn-success btn-green" href="#reviews-anchor" id="open-review-box" style="margin:0px 10px;">Teach NarvisChat</a>
                                     </div>
 
                                     <div class="row" id="post-review-box" style="display:none;">
@@ -325,7 +310,7 @@
                                                 <div id="surveyContainer">
 
                                                     <h4>답변이 마음에 들지 않았다면 좋은 답변을 가르쳐주세요!</h4>
-                                                    <p>여러분의 답변이 Diya Chatbot을 성장시키는 데 큰 도움이 됩니다.</p>
+                                                    <p>여러분의 답변은 NARVIS Chatbot을 성장시키는 데 큰 도움이 됩니다.</p>
                                                     <p class='current_question'>질문을 먼저 입력하고 응답을 기다려주세요.</p>
 
                                                 </div>
@@ -395,7 +380,7 @@
         var time = hours + ":" + minutes;
 
         $('.temp_loading').remove();
-        $('#chat-log').append("<li class='temp_loading right clearfix'><span style='padding-left: 15px;'>DiyaChat</span><span class='chat-img1 pull-left'><a class='button' href='#popup1'><img src='../../static/chatroom/img/chatbot.png' alt='User Avatar' class='img-circle'></a></span><div class='chat-body2 clearfix'><p><img src='../../static/chatroom/img/icons/load.gif' alt='loading'></p><br><div class='chat_time pull-left'>"+ time +"</div></div></li>");
+        $('#chat-log').append("<li class='temp_loading right clearfix'><span style='padding-left: 15px;'>NARVISChat</span><span class='chat-img1 pull-left'><a class='button' href='#popup1'><img src='../../static/chatroom/img/chatbot.png' alt='User Avatar' class='img-circle'></a></span><div class='chat-body2 clearfix'><p><img src='../../static/chatroom/img/icons/load.gif' alt='loading'></p><br><div class='chat_time pull-left'>"+ time +"</div></div></li>");
 
 
         history.pushState(null, null, url);			// changing the address without reload the page. [param: state, title, url]
@@ -408,7 +393,7 @@
          */
         var $temp = $('#invisible').load(encodedUrl, function() {
             $('.temp_loading').remove();        // 로딩이 완료되었으므로 로딩 gif 이미지 제거 후 챗봇의 응답을 append
-            $('#chat-log').append("<li class='right clearfix'><span style='padding-left: 15px;'>DiyaChat</span><span class='chat-img1 pull-left'><a class='button' href='#popup1'><img src='../../static/chatroom/img/chatbot.png' alt='User Avatar' class='img-circle'></a></span><div class='chat-body2 clearfix'><p>" + $temp.html() + "</p><br><div class='chat_time pull-left'>"+ time +"</div></div></li>");
+            $('#chat-log').append("<li class='right clearfix'><span style='padding-left: 15px;'>NARVISChat</span><span class='chat-img1 pull-left'><a class='button' href='#popup1'><img src='../../static/chatroom/img/chatbot.png' alt='User Avatar' class='img-circle'></a></span><div class='chat-body2 clearfix'><p>" + $temp.html() + "</p><br><div class='chat_time pull-left'>"+ time +"</div></div></li>");
             $('#chat_area').animate({scrollTop: $('#chat_area').prop("scrollHeight")}, 500);
 
             $('.current_question').remove();        // surveyContainer에 이전 나의 질문 삭제
@@ -480,7 +465,7 @@
                     success: function (data) {
                         if(data.is_valid) {
                             window.location.href="#popup2";
-                            //alert("감사합니다. 제공해주신 답변은 DIYA chatbot에게 큰 가르침이 될 것입니다.");
+                            //alert("감사합니다. 제공해주신 답변은 NARVIS chatbot에게 큰 가르침이 될 것입니다.");
                         }
                         else {
                             alert("Error occurs!");
