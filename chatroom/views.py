@@ -1,5 +1,5 @@
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django.views.generic.edit import CreateView
@@ -8,7 +8,6 @@ from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework import status
 from .serializers import RoomSerializer
-
 from .models import Room, Answer, Question
 from .models import UserInputDataset
 
@@ -67,14 +66,23 @@ def room(request, lm_name):
         'title': item['title']
     }
     print("debugging from views:", context)
+    if request.method == 'POST':
+        #유저가 보낸 data를 UserInputDataset()모델로 db에 저장
+        new_dataset = UserInputDataset()       # save to DB
+        new_dataset.question = request.POST['question']
+        new_dataset.answer = request.POST['answer']
+        #new_dataset.text = question
+        new_dataset.save()
 
+        print("success to insert new QA dataset from the user")
+        print("Q: " + new_dataset.question + " || A: " + new_dataset.answer)
     '''
     context = {
         'lm_name': mark_safe(json.dumps(lm_name)),
         'chatroom_list': chatroom_list
     }
     '''
-
+    #return redirect('room')
     return render(request, 'chatroom/room.html', context)
 
 
@@ -82,27 +90,27 @@ def detail(request, lm_name):
 
     return HttpResponse("You're looking at chatroom using %s." % lm_name)
 
-
+'''
 @csrf_exempt
-def post_dataset(request):
+def UserInputDataset(request):
+    if request.method == 'POST':
+        #유저가 보낸 data를 UserInputDataset()모델로 db에 저장
+        new_dataset = UserInputDataset()       # save to DB
+        new_dataset.question = request.POST['question']
+        new_dataset.answer = request.POST['answer']
+        #new_dataset.text = question
+        new_dataset.save()
 
-    question = request.POST.get('question', None)
-    answer = request.POST.get('answer', None)
-
-    #유저가 보낸 data를 UserInputDataset()모델로 db에 저장
-    new_dataset = UserInputDataset(question=question, answer=answer)       # save to DB
-    new_dataset.text = question
-    new_dataset.save()
-
-    print("success to insert new QA dataset from the user")
-    print("Q: " + question + " || A: " + answer)
+        print("success to insert new QA dataset from the user")
+        #print("Q: " + question + " || A: " + answer)
 
     data = {
         'is_valid': 1
     }
-    return render(request, 'chatroom/room.html', context={'question': new_dataset})
+    return redirect('index')
+    #return render(request, 'chatroom/room.html', context={'question': new_dataset})
     #return JsonResponse(data)
-
+'''
 def post_view(request):
     return render(request, 'chatroom/room.html')
 
