@@ -200,7 +200,7 @@
 
                             <div id="chat_area">
                                 <p class="init_chat">
-                                    <h3> testing with baidu database: url and title from random index</h3>
+                                    <h5> testing with baidu database: url and title from random index</h5>
                                     {% csrf_token %}
                                     {% for k in url%}
                                        {{ k }}
@@ -211,9 +211,10 @@
                                      <h1>
                                          {{ text }}
                                      </h1>
-                                     <h1>
+                                     <h4>
                                      {{ question }}
-                                     </h1>
+                                     </h4>
+                                <div><img src="../../static/chatroom/img/graph.png" style="width:400px; margin: 12px;">></div>
                                     {% for q in new_dataset %}
                                         <h1>{{new_dataset.question}}</h1>
                                          {{ question }}
