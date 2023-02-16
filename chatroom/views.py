@@ -17,6 +17,7 @@ from .forms import DatasetPostForm
 import pymongo
 import json
 
+import requests
 import random
 import tensorflow as tf
 import os
@@ -70,18 +71,19 @@ def room(request, lm_name):
         'title': item['title']
     }
     print("debugging from views:", context)
-    if request.method == 'POST':
+    if request.method == 'GET':
         #유저가 보낸 data를 UserInputDataset()모델로 db에 저장
         new_dataset = UserInputDataset()       # save to DB
-        new_dataset.question = request.POST['question']
-        #new_dataset.answer = request.POST['answer']
+        new_dataset.question = request.GET.get('question')
+        print("new_dataset.question",new_dataset.question)
         new_dataset.save()
         print("success to insert new QA dataset from the user")
-      #  print("Q: " + new_dataset.question + " || A: " + new_dataset.answer)
+
         create_graph(new_dataset.question)
+        summary = rag_model(request, new_dataset.question)
         new_dataset = { #for request html
             'question': new_dataset.question,
-           # 'answer': new_dataset.answer,
+            'summary': summary
         }
 
         return render(request, 'chatroom/room.html', new_dataset)
@@ -95,44 +97,6 @@ def room(request, lm_name):
     return render(request, 'chatroom/room.html', context)
 
 def create_graph(keyword):
-    '''
-    plt.figure(figsize=(16, 8))
-    plt.margins(x=0.1, y=0.02)
-    example = {'연금시장': {'채권시장': 0.4153662323951721, '시장': 0.41456204652786255, '주식시장': 0.3486636281013489,
-                        '경제': 0.25629764795303345, '단계': 0.24219422042369843, '규모': 0.24082091450691223,
-                        '거래': 0.22897380590438843, '국내': 0.2052801549434662, '주선': 0.1902499794960022,
-                        '리스': 0.1724136471748352},
-               '경제': {'주선': 0.2807018756866455, '채권시장': 0.2597755193710327, '하락': 0.2146831750869751,
-                      '산업': 0.21218357980251312, '경쟁': 0.2039693295955658, '한국': 0.20326876640319824,
-                      '단계': 0.20303569734096527, '리스': 0.1892050802707672, '수익': 0.17960302531719208,
-                      '최근': 0.17808492481708527},
-               '채권': {'측정': 0.3019123673439026, '특성': 0.27175581455230713, '채권시장': 0.2508116364479065,
-                      '우수': 0.23209211230278015, '수준': 0.22973835468292236, '관련': 0.22968417406082153,
-                      '조원': 0.21655943989753723, '금액': 0.20694774389266968, '인력': 0.19489142298698425,
-                      '주식시장': 0.18427613377571106}}
-    G = nx.DiGraph(example)
-    #G = dict(DG.degree)
-    # 아래 layout 중에서 마음에 드는 것을 쓰면 됩니다.
-    pos = nx.spring_layout(G)
-    #pos = graphviz_layout(G, prog='twopi')
-    #pos = nx.circular_layout(G)
-
-    nx.draw_networkx_nodes(
-        G, pos, node_color=[n[1]['weight'] for n in G.nodes(data=True)], node_shape='h',
-        node_size=3000, cmap=plt.cm.Blues, alpha=0.9
-    )
-    nx.draw_networkx_edges(
-        G, pos, edge_color=[e[2]['weight'] for e in G.edges(data=True)],
-        width=5, edge_cmap=plt.cm.Greys, style='dashed'
-    )
-    nx.draw_networkx_labels(
-        G, pos, font_family='sans-serif', font_color='black', font_size=10, font_weight='bold'
-    )
-    plt.axis('off')
-    # plt.show()
-    plt.savefig("D:/2022_2_GraphTransformer\graphtransformer\diya-chat\diyaChat\chatroom\static\chatroom\img\graph.png")
-
-    '''
     font_name = fm.FontProperties(fname="C:/Users\poohl/anaconda3\Lib\site-packages\matplotlib\mpl-data/fonts/ttf/NanumGothic.ttf").get_name()
     rc('font', family=font_name)
     plt.title('Knowledge Graph for Keyword')
@@ -180,12 +144,14 @@ def create_graph(keyword):
     plt.savefig("D:/2022_2_GraphTransformer\graphtransformer\diya-chat\diyaChat\chatroom\static\chatroom\img\graph.png")
 
 
-def rag_model(request):#TODO
-    query = request.args.get("query")
-    response = request.get('http://03c6-35-240-254-151.ngrok.io/predict', {'input_text': query})
-    summarized_text = response.text
+def rag_model(request, input_text):#TODO
+    #TODO POST or GET?
+    response = requests.get('http://ccf1-35-196-152-123.ngrok.io/predict', {'input_text': input_text})
+    #summarized_text = response.text
 
-    return render(request, 'chatroom/room.html', summarized_text=summarized_text)
+    print("summarized_text:",{'summarized': response.text})
+    return response.text
+    #return render(request, 'chatroom/room.html', summarized_text)
 
 def detail(request, lm_name):
 
@@ -385,7 +351,7 @@ def message(request, message, lm_name):
 
 
     #return HttpResponse("%s" % answer)#TODO
-    return render(request, 'chatroom/room.html', {'answer_obj':answer_obj, 'question_obj':question_obj,'answer':answer})
+    return render(requests, 'chatroom/room.html', {'answer_obj':answer_obj, 'question_obj':question_obj,'answer':answer})
 
 # this is only for test
 '''
