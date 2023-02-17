@@ -16,6 +16,7 @@ import random as rd
 from .forms import DatasetPostForm
 import pymongo
 import json
+from datetime import datetime
 
 import requests
 import random
@@ -63,12 +64,17 @@ def room(request, lm_name):
     #baidu = Room.objects.all()
     item = baidu.find_one()
     # print(x)
+    #챗봇 현재시간 추력
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    print(current_time)
 
     #READ
     context = {
         'keywords': item['keywords'],
         'url': item['url'],
-        'title': item['title']
+        'title': item['title'],
+        'current_time' : current_time
     }
     print("debugging from views:", context)
     if request.method == 'GET':
@@ -81,9 +87,11 @@ def room(request, lm_name):
 
         create_graph(new_dataset.question)
         summary = rag_model(request, new_dataset.question)
+        answer = "temp_ans_from_kordpr"
         new_dataset = { #for request html
             'question': new_dataset.question,
-            'summary': summary
+            'summary': summary,
+            'answer': answer
         }
 
         return render(request, 'chatroom/room.html', new_dataset)
@@ -94,7 +102,7 @@ def room(request, lm_name):
     }
     '''
     #return redirect('room')
-    return render(request, 'chatroom/room.html', context)
+    return render(request, 'chatroom/room.html', {'context':context, 'current_time': current_time})
 
 def create_graph(keyword):
     font_name = fm.FontProperties(fname="C:/Users\poohl/anaconda3\Lib\site-packages\matplotlib\mpl-data/fonts/ttf/NanumGothic.ttf").get_name()

@@ -74,6 +74,55 @@
         #tab3:checked ~ #content3,
         #tab4:checked ~ #content4 {
             display: block;}
+
+        .container {
+          border: 2px solid #dedede;
+          background-color: #f1f1f1;
+          border-radius: 5px;
+          padding: 10px;
+          margin: 10px 0;
+        }
+
+        /* Darker chat container */
+        .darker {
+          border-color: #ccc;
+          background-color: #ddd;
+        }
+
+        /* Clear floats */
+        .container::after {
+          content: "";
+          clear: both;
+          display: table;
+        }
+
+        /* Style images */
+        .container img {
+          float: left;
+          max-width: 60px;
+          width: 100%;
+          margin-right: 20px;
+          border-radius: 50%;
+        }
+
+        /* Style the right image */
+        .container img.right {
+          float: right;
+          margin-left: 40px;
+          margin-right:0;
+        }
+
+        /* Style time text */
+        .time-right {
+          float: right;
+          color: #aaa;
+        }
+
+        /* Style time text */
+        .time-left {
+          float: left;
+          color: #999;
+        }
     </style>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -241,9 +290,23 @@
                                         <label for="tab3">키워드 그래프</label>
 
                                         <section id="content1">
-                                            <p>{% csrf_token %}
-                                            <h3>Debug Input </h3><br>
-                                             {{ question }}</p>
+                                            <div class="container">
+                                              <img src="https://d33wubrfki0l68.cloudfront.net/469064f828e10ca697ad798742ad9fce4ed3bbbb/8ea9a/naevisface.png" alt="Avatar">
+                                              <p>안녕하세요! 제 이름은 NARVIS에요. 궁금하신 것을 물어봐주세요. :)</p>
+                                            </div>
+                                            {% if question %}
+                                            <div class="container darker">
+                                              <img src="https://pbs.twimg.com/media/FnjFW8LacAElm0T.jpg:large" alt="Avatar" class="right">
+                                                <p>{% csrf_token %}{{question}}</p>
+                                            </div>
+                                            {% endif %}
+                                            {% if answer %}
+                                            <div class="container">
+                                              <img src="https://d33wubrfki0l68.cloudfront.net/469064f828e10ca697ad798742ad9fce4ed3bbbb/8ea9a/naevisface.png" alt="Avatar">
+                                              <p>KORDPR 모델의 답변은 이렇습니다.{{answer}}</p>
+                                            </div>
+                                            {% endif %}
+
                                         </section>
 
                                         <section id="content2">
@@ -252,8 +315,8 @@
                                         </section>
 
                                         <section id="content3">
-                                            <p><h3>3. Knowledge Graph </h3><br>
-                                         <div><img src="../../static/chatroom/img/graph.png" style="width:800px; margin: 12px;">></div></p>
+                                            <h3>3. Knowledge Graph </h3><br>
+                                         <div><img src="../../static/chatroom/img/graph.png" style="max-width: 100%;">></div>
                                         </section>
 
 
